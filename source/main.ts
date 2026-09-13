@@ -19,6 +19,7 @@ import {
 } from './utilities/cli.js';
 import { loadConfiguration } from './utilities/config.js';
 import { logger } from './utilities/logger.js';
+import { getQRCode } from './utilities/qr-code.js';
 
 // Parse the options passed by the user.
 const [parseError, args] = await resolve(parseArguments());
@@ -118,7 +119,12 @@ for (const endpoint of args['--listen']) {
 
     message += `\n\n${chalk.bold(`${prefix}Local:`)}${space}${local}`;
   }
-  if (network) message += `\n${chalk.bold('- Network:')}  ${network}`;
+  // if (network) message += `\n${chalk.bold('- Network:')}  ${network}`;
+  if (network) {
+    // eslint-disable-next-line no-await-in-loop
+    const networkQR = await getQRCode(network);
+    message += `\n${chalk.bold('- Network:')}  ${network}\n${networkQR}`;
+  }
   if (previous)
     message += chalk.red(
       `\n\nThis port was picked because ${chalk.underline(
